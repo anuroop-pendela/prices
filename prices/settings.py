@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+import environ
+root_path = environ.Path(__file__) - 2
+env = environ.Env(DEBUG=(bool, False), DJANGO_ENV=(
+    str, 'dev'))  # set default    values and casting
+environ.Env.read_env(root_path('.env'))
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -78,12 +84,12 @@ WSGI_APPLICATION = 'prices.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'pentagon',
-        'USER': 'postgres',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 

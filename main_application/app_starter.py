@@ -63,18 +63,19 @@ class priceUpdater:
         self.exchange_meta_data['bitflyerFx']['params'] = {
             'product_code': 'FX_BTC_JPY'}
 
-        self.__price_updater__()
-
         # Bitmex WS variables
         self.ws = None
         self.ws_thread = None
         self.ws_object = None
         self.ws_restart = False
-        self.t1 = threading.Thread(target=self.handleBitmexWebsocket)
-        self.t1.setName('handleBitmexWebsocket')
+        self.t1 = threading.Thread(target=self.__handle_bitmex_websocket__)
+        self.t1.setName('__handle_bitmex_websocket__')
         self.t1.start()
+        self.t2 = threading.Thread(target=self.__price_updater__)
+        self.t2.setName('__price_updater__')
+        self.t2.start()
 
-    def handleBitmexWebsocket(self, **kwargs):
+    def __handle_bitmex_websocket__(self, **kwargs):
         try:
             self.ws = BitmexWS()
             self.ws.connect()

@@ -13,6 +13,7 @@ import pickle
 from urllib.parse import urlparse, urlunparse
 import logging
 
+from main_application.models import Prices
 
 class BitmexWS(object):
 
@@ -202,6 +203,14 @@ class BitmexWS(object):
                             self.ticker_last = data_dict['quote'][-1]['askPrice']
                             self.ticker_bid = data_dict['quote'][-1]['bidPrice']
                             self.ticker_ask = data_dict['quote'][-1]['askPrice']
+
+                            temp_prices = Prices()
+                            setattr(temp_prices, 'bid', self.ticker_bid)
+                            setattr(temp_prices, 'ask', self.ticker_ask)
+                            setattr(temp_prices, 'exchange_name', 'bitmex')
+                            print("bitmex",self.ticker_bid,self.ticker_ask)
+                            temp_prices.save()
+
 
                             logging.info("Bitmex_Exchange | websocket updated ask_price: {} and bid_price: {}" .format(
                                 self.ticker_ask, self.ticker_bid))
