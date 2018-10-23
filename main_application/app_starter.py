@@ -137,7 +137,9 @@ class priceUpdater:
                     setattr(temp_prices, 'bid', bid_price)
                     setattr(temp_prices, 'ask', ask_price)
                     setattr(temp_prices, 'exchange_name', exchange)
-                    temp_prices.save()
+                    if (bid_price != -1 and ask_price != -1):
+                        temp_prices.save()
+
                     print(exchange, bid_price, ask_price)
             except Exception as ex:
                 print("Faced this exception ", ex)
