@@ -131,9 +131,9 @@ class priceUpdater:
 
                     # extracting data in json format
                     data = r.json()
-                    bid_price = data.get(bid_var)
-                    ask_price = data.get(ask_var)
-
+                    bid_price = data.get(bid_var,-1)
+                    ask_price = data.get(ask_var,-1)
+                    print("response for",exchange,data)
                     setattr(temp_prices, 'bid', bid_price)
                     setattr(temp_prices, 'ask', ask_price)
                     setattr(temp_prices, 'exchange_name', exchange)
