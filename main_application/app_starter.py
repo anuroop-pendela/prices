@@ -147,7 +147,3 @@ class priceUpdater:
                     traceback.format_exc()))
             finally:
                 time.sleep(5)
-
-"""
-Test commit
-"""
