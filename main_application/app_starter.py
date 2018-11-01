@@ -13,7 +13,7 @@ import time
 #import pandas as pd
 from datetime import datetime
 
-CLOUD_LOGGER_PATH="/home/vagrant/code/Autospreader168/main_application/app/autospreader-201007-firebase-adminsdk-urukp-24c898aebc.json"
+CLOUD_LOGGER_PATH="/home/ubuntu/Autospreader168/main_application/app/autospreader-201007-firebase-adminsdk-urukp-24c898aebc.json"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CLOUD_LOGGER_PATH
 class priceUpdater:
 
