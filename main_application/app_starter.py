@@ -1,12 +1,20 @@
 import threading
 import requests
 import time
-from main_application.models import Prices
+from main_application.models import Prices, RestCallStatus
 import traceback
 from .bitmex import BitmexWS
 import logging
+import re
+from google.cloud import logging as lg
+from google.cloud.logging import DESCENDING
+import os
+import time
+#import pandas as pd
+from datetime import datetime
 
-
+CLOUD_LOGGER_PATH="/home/vagrant/code/Autospreader168/main_application/app/autospreader-201007-firebase-adminsdk-urukp-24c898aebc.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CLOUD_LOGGER_PATH
 class priceUpdater:
 
     def __init__(self):
@@ -74,6 +82,9 @@ class priceUpdater:
         self.t2 = threading.Thread(target=self.__price_updater__)
         self.t2.setName('__price_updater__')
         self.t2.start()
+        self.t3 = threading.Thread(target=self.rest_status_updater)
+        self.t3.setName('rest_status_updater')
+        self.t3.start()
 
     def __handle_bitmex_websocket__(self, **kwargs):
         try:
@@ -147,3 +158,37 @@ class priceUpdater:
                     traceback.format_exc()))
             finally:
                 time.sleep(5)
+    
+    def rest_status_updater(self):
+        FILTER = 'resource.type="global" AND "bitmexapicall"'
+        i = 0 
+        df_data = []
+        logging_client = lg.Client(project = "autospreader-201007")
+        for entry in logging_client.list_entries(order_by=DESCENDING,filter_=FILTER):# API call
+            if entry.payload:
+                match_obj = re.search(r'bitmexapicall',entry.payload.get('message'))
+                if match_obj:
+                    matched = match_obj.string.split('|')
+                    print('matched:{}'.format(matched))
+                    try:
+                        rs = RestCallStatus()
+                        rs.log_date = datetime.strptime(matched[0],'%Y-%m-%d %H:%M:%S.%f ')
+                        rs.path = matched[5].split(':')[1]
+                        rs.verb = matched[6].split(':')[1]
+                        rs.query = matched[7].split(':')[1]
+                        rs.response_code = matched[8].split(':')[1]
+                        rs.save()
+                    except:
+                        logging.error('Got exception in mysql storage : {}'.format(traceback.format_exc()))
+                    """ 
+                    parse_data = {}
+                    parse_data['date'] = matched[0]
+                    parse_data['path']=matched[5].split(':')[1]
+                    parse_data['verb']=matched[6].split(':')[1]
+                    parse_data['query']=matched[7].split(':')[1]
+                    parse_data['response_code']=matched[8].split(':')[1]
+                    df_data.append(parse_data)
+                    pd.DataFrame(df_data).to_csv('prod_parsed_data_from_logger_filterd.csv')
+                    """
+               
+            time.sleep(1)
