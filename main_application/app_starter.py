@@ -160,9 +160,11 @@ class priceUpdater:
                 time.sleep(5)
     
     def rest_status_updater(self):
-        FILTER = 'resource.type="global" AND "bitmexapicall"'
-        i = 0 
-        df_data = []
+        """
+        reads logs from stackdriver logger of given filter in descending order
+         
+        """
+        FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"2018-11-01T05:59:50.061075911Z"'
         logging_client = lg.Client(project = "autospreader-201007")
         for entry in logging_client.list_entries(order_by=DESCENDING,filter_=FILTER):# API call
             if entry.payload:
@@ -180,15 +182,5 @@ class priceUpdater:
                         rs.save()
                     except:
                         logging.error('Got exception in mysql storage : {}'.format(traceback.format_exc()))
-                    """ 
-                    parse_data = {}
-                    parse_data['date'] = matched[0]
-                    parse_data['path']=matched[5].split(':')[1]
-                    parse_data['verb']=matched[6].split(':')[1]
-                    parse_data['query']=matched[7].split(':')[1]
-                    parse_data['response_code']=matched[8].split(':')[1]
-                    df_data.append(parse_data)
-                    pd.DataFrame(df_data).to_csv('prod_parsed_data_from_logger_filterd.csv')
-                    """
                
             time.sleep(1)
