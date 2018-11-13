@@ -7,7 +7,7 @@ from .bitmex import BitmexWS
 import logging
 import re
 from google.cloud import logging as lg
-from google.cloud.logging import DESCENDING
+from google.cloud.logging import DESCENDING,ASCENDING
 import os
 import time
 #import pandas as pd
@@ -166,7 +166,7 @@ class priceUpdater:
         """
         FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"2018-11-01T05:59:50.061075911Z"'
         logging_client = lg.Client(project = "autospreader-201007")
-        for entry in logging_client.list_entries(order_by=DESCENDING,filter_=FILTER):# API call
+        for entry in logging_client.list_entries(order_by=ASCENDING,filter_=FILTER):# API call
             if entry.payload:
                 match_obj = re.search(r'bitmexapicall',entry.payload.get('message'))
                 if match_obj:
