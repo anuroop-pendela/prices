@@ -164,23 +164,26 @@ class priceUpdater:
         reads logs from stackdriver logger of given filter in descending order
          
         """
-        FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"2018-11-05T05:59:50.061075911Z"'
+        FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"2018-11-18T05:59:50.061075911Z"'
         logging_client = lg.Client(project = "autospreader-201007")
-        for entry in logging_client.list_entries(order_by=ASCENDING,filter_=FILTER):# API call
-            if entry.payload:
-                match_obj = re.search(r'bitmexapicall',entry.payload.get('message'))
-                if match_obj:
-                    matched = match_obj.string.split('|')
-                    print('matched:{}'.format(matched))
-                    try:
-                        rs = RestCallStatus()
-                        rs.log_date = datetime.strptime(matched[0],'%Y-%m-%d %H:%M:%S.%f ')
-                        rs.path = matched[5].split(':')[1]
-                        rs.verb = matched[6].split(':')[1]
-                        rs.query = matched[7].split(':')[1]
-                        rs.response_code = matched[8].split(':')[1]
-                        rs.save()
-                    except:
-                        logging.error('Got exception in mysql storage : {}'.format(traceback.format_exc()))
-               
-            time.sleep(1)
+        try:
+            for entry in logging_client.list_entries(order_by=ASCENDING,filter_=FILTER):# API call
+                if entry.payload:
+                    match_obj = re.search(r'bitmexapicall',entry.payload.get('message'))
+                    if match_obj:
+                        matched = match_obj.string.split('|')
+                        print('matched:{}'.format(matched))
+                        try:
+                            rs = RestCallStatus()
+                            rs.log_date = datetime.strptime(matched[0],'%Y-%m-%d %H:%M:%S.%f ')
+                            rs.path = matched[5].split(':')[1]
+                            rs.verb = matched[6].split(':')[1]
+                            rs.query = matched[7].split(':')[1]
+                            rs.response_code = matched[8].split(':')[1]
+                            rs.save()
+                        except:
+                            logging.error('Got exception in mysql storage : {}'.format(traceback.format_exc()))
+                
+                time.sleep(1)
+        except:
+            logging.error('Error in log update code stacktrace : {}'.format(traceback.format_exc()))
