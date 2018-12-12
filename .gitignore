@@ -4,4 +4,6 @@ main_application/__pycache__/app_starter.cpython-36.pyc
 main_application/__pycache__/*
 prices/__pycache__/*
 
+main_application/migrations/*.py
+
 __pycache__/

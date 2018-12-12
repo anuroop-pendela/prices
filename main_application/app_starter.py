@@ -9,12 +9,16 @@ import re
 from google.cloud import logging as lg
 from google.cloud.logging import DESCENDING,ASCENDING
 import os
-import time
 #import pandas as pd
 from datetime import datetime
-
-CLOUD_LOGGER_PATH="/home/ubuntu/Autospreader168/main_application/app/autospreader-201007-firebase-adminsdk-urukp-24c898aebc.json"
+import json
+from main_application.models import  ApiCallLog
+CLOUD_LOGGER_PATH="/home/vagrant/code/Autospreader168/main_application/app/suraj-autospreader-9db79066f924.json"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CLOUD_LOGGER_PATH
+
+
+#CLOUD_LOGGER_PATH="/home/ubuntu/Autospreader168/main_application/app/autospreader-201007-firebase-adminsdk-urukp-24c898aebc.json"
+#os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CLOUD_LOGGER_PATH
 class priceUpdater:
 
     def __init__(self):
@@ -159,11 +163,49 @@ class priceUpdater:
             finally:
                 time.sleep(5)
     
+    
+
     def rest_status_updater(self):
         """
         reads logs from stackdriver logger of given filter in descending order
-         
         """
+        # find max log_date at next startup and filter log after that date
+        string_data = str(ApiCallLog.objects.latest('log_date').log_date).split(' ')
+        
+        FILTER = 'resource.type="global" AND "PRANEETH_SNEHA_SUDHA_LOG_RECORD" AND timestamp>"{}T{}.061075911Z"'.format(string_data[0],string_data[1].split('.')[0])
+
+        #FILTER = 'resource.type="global" AND "PRANEETH_SNEHA_SUDHA_LOG_RECORD" AND timestamp>"2018-12-12T12:15:12.061075911Z"'
+        logging_client = lg.Client(project = "suraj-autospreader")
+        try:
+            for entry in logging_client.list_entries(order_by=ASCENDING,filter_=FILTER):# API call
+                if entry.payload:
+                    match_obj = re.search(r'log_data',entry.payload.get('message'))
+                    if match_obj:
+                        data = match_obj.string.split('|')
+                        log_data =json.loads(data[5][11:])
+                        ap = ApiCallLog()
+                        ap.log_date = data[0][:-1]
+                        ap.exchange_name = log_data.get('exchange_name')
+                        ap.end_point = log_data.get('url_end')
+                        ap.parameters = log_data.get('pay_load')
+                        ap.response_code = log_data.get('status_code')
+                        ap.order_id = log_data.get('order_id')
+                        ap.strategy_id = log_data.get('strategy_id')
+                        ap.routine_id = log_data.get('routine_id')
+                        ap.response = log_data.get('response')
+                        ap.response = log_data.get('exchange_order_id')
+                        ap.save()
+                        print('matched:{}'.format(data))
+                time.sleep(1)
+        except:
+            logging.error('Error in log update code stacktrace : {}'.format(traceback.format_exc()))
+
+
+"""def rest_status_updater(self):
+        
+        #reads logs from stackdriver logger of given filter in descending order
+         
+        
         FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"2018-11-18T05:59:50.061075911Z"'
         logging_client = lg.Client(project = "autospreader-201007")
         try:
@@ -187,3 +229,4 @@ class priceUpdater:
                 time.sleep(1)
         except:
             logging.error('Error in log update code stacktrace : {}'.format(traceback.format_exc()))
+    """
