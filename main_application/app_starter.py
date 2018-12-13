@@ -164,7 +164,10 @@ class priceUpdater:
         reads logs from stackdriver logger of given filter in descending order
          
         """
-        FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"2018-12-06T05:59:50.061075911Z"'
+        string_data = str(RestCallStatus.objects.latest('log_date').log_date).split(' ')
+        
+        FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"{}T{}.061075911Z"'.format(string_data[0],string_data[1].split('.')[0])
+        #FILTER = 'resource.type="global" AND "bitmexapicall" AND timestamp>"2018-12-06T05:59:50.061075911Z"'
         logging_client = lg.Client(project = "autospreader-201007")
         for entry in logging_client.list_entries(order_by=ASCENDING,filter_=FILTER):# API call
             if entry.payload:
