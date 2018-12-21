@@ -80,12 +80,12 @@ class priceUpdater:
         self.ws_thread = None
         self.ws_object = None
         self.ws_restart = False
-        self.t1 = threading.Thread(target=self.__handle_bitmex_websocket__)
-        self.t1.setName('__handle_bitmex_websocket__')
-        self.t1.start()
-        self.t2 = threading.Thread(target=self.__price_updater__)
-        self.t2.setName('__price_updater__')
-        self.t2.start()
+        #self.t1 = threading.Thread(target=self.__handle_bitmex_websocket__)
+        #self.t1.setName('__handle_bitmex_websocket__')
+        #self.t1.start()
+        #self.t2 = threading.Thread(target=self.__price_updater__)
+        #self.t2.setName('__price_updater__')
+        #self.t2.start()
         self.t3 = threading.Thread(target=self.rest_status_updater)
         self.t3.setName('rest_status_updater')
         self.t3.start()
@@ -181,21 +181,25 @@ class priceUpdater:
                 if entry.payload:
                     match_obj = re.search(r'log_data',entry.payload.get('message'))
                     if match_obj:
-                        data = match_obj.string.split('|')
-                        log_data =json.loads(data[5][11:])
-                        ap = ApiCallLog()
-                        ap.log_date = data[0][:-1]
-                        ap.exchange_name = log_data.get('exchange_name')
-                        ap.end_point = log_data.get('url_end')
-                        ap.parameters = log_data.get('pay_load')
-                        ap.response_code = log_data.get('status_code')
-                        ap.order_id = log_data.get('order_id')
-                        ap.strategy_id = log_data.get('strategy_id')
-                        ap.routine_id = log_data.get('routine_id')
-                        ap.response = log_data.get('response')
-                        ap.response = log_data.get('exchange_order_id')
-                        ap.save()
-                        print('matched:{}'.format(data))
+                        try:
+                            data = match_obj.string.split('|')
+                            print('data : {}'.format(data))
+                            log_data =json.loads(data[5][11:])
+                            ap = ApiCallLog()
+                            ap.log_date = data[0][:-1]
+                            ap.exchange_name = log_data.get('exchange_name')
+                            ap.end_point = log_data.get('url_end')
+                            ap.parameters = log_data.get('pay_load')
+                            ap.response_code = log_data.get('status_code')
+                            ap.order_id = log_data.get('order_id')
+                            ap.strategy_id = log_data.get('strategy_id')
+                            ap.routine_id = log_data.get('routine_id')
+                            ap.response = log_data.get('response')
+                            ap.exchange_order_id = log_data.get('exchange_order_id')
+                            ap.save()
+                            print('matched:{}'.format(data))
+                        except:
+                            logging.error('got error for data :{} | stacktrace : {}'.format(data , traceback.format_exc()))
                 time.sleep(1)
         except:
             logging.error('Error in log update code stacktrace : {}'.format(traceback.format_exc()))
