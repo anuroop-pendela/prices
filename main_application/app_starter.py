@@ -13,12 +13,12 @@ import os
 from datetime import datetime
 import json
 from main_application.models import  ApiCallLog
-CLOUD_LOGGER_PATH="/home/vagrant/code/Autospreader168/main_application/app/suraj-autospreader-9db79066f924.json"
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CLOUD_LOGGER_PATH
-
-
-#CLOUD_LOGGER_PATH="/home/ubuntu/Autospreader168/main_application/app/autospreader-201007-firebase-adminsdk-urukp-24c898aebc.json"
+#CLOUD_LOGGER_PATH="/home/vagrant/code/Autospreader168/main_application/app/suraj-autospreader-9db79066f924.json"
 #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CLOUD_LOGGER_PATH
+
+
+CLOUD_LOGGER_PATH="/home/ubuntu/Autospreader168/main_application/app/autospreader-201007-firebase-adminsdk-urukp-24c898aebc.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CLOUD_LOGGER_PATH
 class priceUpdater:
 
     def __init__(self):
@@ -80,12 +80,12 @@ class priceUpdater:
         self.ws_thread = None
         self.ws_object = None
         self.ws_restart = False
-        #self.t1 = threading.Thread(target=self.__handle_bitmex_websocket__)
-        #self.t1.setName('__handle_bitmex_websocket__')
-        #self.t1.start()
-        #self.t2 = threading.Thread(target=self.__price_updater__)
-        #self.t2.setName('__price_updater__')
-        #self.t2.start()
+        self.t1 = threading.Thread(target=self.__handle_bitmex_websocket__)
+        self.t1.setName('__handle_bitmex_websocket__')
+        self.t1.start()
+        self.t2 = threading.Thread(target=self.__price_updater__)
+        self.t2.setName('__price_updater__')
+        self.t2.start()
         self.t3 = threading.Thread(target=self.rest_status_updater)
         self.t3.setName('rest_status_updater')
         self.t3.start()
