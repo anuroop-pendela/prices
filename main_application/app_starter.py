@@ -175,7 +175,7 @@ class priceUpdater:
         FILTER = 'resource.type="global" AND "PRANEETH_SNEHA_SUDHA_LOG_RECORD" AND timestamp>"{}T{}.061075911Z"'.format(string_data[0],string_data[1].split('.')[0])
 
         #FILTER = 'resource.type="global" AND "PRANEETH_SNEHA_SUDHA_LOG_RECORD" AND timestamp>"2018-12-12T12:15:12.061075911Z"'
-        logging_client = lg.Client(project = "suraj-autospreader")
+        logging_client = lg.Client(project = "autospreader-201007")
         try:
             for entry in logging_client.list_entries(order_by=ASCENDING,filter_=FILTER):# API call
                 if entry.payload:
