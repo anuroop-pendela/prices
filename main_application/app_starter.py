@@ -183,7 +183,6 @@ class priceUpdater:
                     if match_obj:
                         try:
                             data = match_obj.string.split('|')
-                            print('data : {}'.format(data))
                             log_data =json.loads(data[5][11:])
                             ap = ApiCallLog()
                             ap.log_date = data[0][:-1]
