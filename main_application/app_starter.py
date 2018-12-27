@@ -196,7 +196,7 @@ class priceUpdater:
                             ap.response = log_data.get('response')
                             ap.exchange_order_id = log_data.get('exchange_order_id')
                             ap.save()
-                            print('matched:{}'.format(data))
+                            print('matched: url_end : {} | exchange_name :{}'.format(log_data.get('url_end') ,log_data.get('exchange_name') ))
                         except:
                             logging.error('got error for data :{} | stacktrace : {}'.format(data , traceback.format_exc()))
                 time.sleep(1)
