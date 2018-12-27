@@ -199,7 +199,7 @@ class BitmexWS(object):
                 if table == 'quote':
                     if 'askPrice' in data_dict['quote'][-1]:
                         if abs(data_dict['quote'][-1]['askPrice'] - self.ticker_last) >= 0.1:
-                            print('data_dict: ', data_dict)
+                            #print('data_dict: ', data_dict)
                             self.ticker_last = data_dict['quote'][-1]['askPrice']
                             self.ticker_bid = data_dict['quote'][-1]['bidPrice']
                             self.ticker_ask = data_dict['quote'][-1]['askPrice']
