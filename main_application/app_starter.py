@@ -172,7 +172,7 @@ class priceUpdater:
         # find max log_date at next startup and filter log after that date
         string_data = str(ApiCallLog.objects.latest('log_date').log_date).split(' ')
         
-        FILTER = 'resource.type="global" AND "PRANEETH_SNEHA_SUDHA_LOG_RECORD" AND timestamp>"{}T{}.061075911Z"'.format(string_data[0],string_data[1].split('.')[0])
+        FILTER = 'resource.type="global" AND "PRANEETH_SNEHA_SUDHA_LOG_RECORD" AND timestamp>"{}T{}.00000000Z"'.format(string_data[0],string_data[1].split('.')[0])
 
         #FILTER = 'resource.type="global" AND "PRANEETH_SNEHA_SUDHA_LOG_RECORD" AND timestamp>"2018-12-12T12:15:12.061075911Z"'
         logging_client = lg.Client(project = "autospreader-201007")
